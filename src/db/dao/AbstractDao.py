@@ -58,3 +58,19 @@ class AbstractDao(ABC):
         Handles commit/rollback for the specific operation.
         """
         pass
+
+    @abstractmethod
+    def _execute_insert_with_retry(self, query: str, params: Optional[Tuple], max_retries: int, retry_delay: int) -> int:
+        """
+        Helper method to execute an INSERT query with retry logic.
+        Returns the last inserted row ID or raises an exception if it fails.
+        """
+        pass
+
+    @abstractmethod
+    def _execute_update_delete_with_retry(self, query: str, params: Optional[Tuple], max_retries: int, retry_delay: float) -> int:
+        """
+        Helper method to execute an UPDATE or DELETE query with retry logic.
+        Returns affected_rows if the update or delete was successful
+        """
+        pass
