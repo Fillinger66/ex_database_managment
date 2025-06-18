@@ -6,10 +6,7 @@ A Python-based database management system demonstrating clean architecture princ
 
 This project showcases a well-structured database management system built with Python, following clean architecture principles and SOLID design patterns. It provides multiple abstraction layers for database operations, making it easy to extend and maintain.
 
-**Nice to have :**
-- **Insert: return id of the inserted row**
-- **Delete : return the number of row deleted**
-- **Update : return the number of affected rows**
+**This project can give you the basis to interact with a database. For sure it can still be improve and I invite you to try it**
 
 ## 📁 Project Structure
 
@@ -112,6 +109,8 @@ This project follows clean architecture principles with clear separation of conc
 from db.connection.impl.SQLiteConnectionProvider import SQLiteConnectionProvider
 from db.dao.impl.ArtistDao import ArtistDao
 
+.....
+
 # Initialize connection
 connection_provider = SQLiteConnectionProvider("database/music.db")
 connection = connection_provider.get_connection()
@@ -123,16 +122,17 @@ artist_dao = ArtistDao(connection=connection, verbose=True)
 if not artist_dao.is_table_exist():
     artist_dao.create_table_artist()
 
-# Insert new artist
-is_artist_inserted = artist_dao.insert("John Doe")
-if is_artist_inserted:
-    print(f"Created artist sucessfully")
-else:
-    print(f"Artist creation failed")
+# Example usage: Create a new artist (replace with actual data)
+new_artist_id = artist_dao.insert(artist_name="New Artist")
+if new_artist_id!=-1:
+    print(f"New artist created with id {new_artist_id} \nRetrieving the artist...")
+    artist = artist_dao.get_artist_by_id(artist_id=new_artist_id)
+    if artist:
+        print(f"New Artist ID: {artist[ArtistDao._field_id]}, Name: {artist[ArtistDao._field_name]}")
+    else:
+        print("Failed to retrieve the new artist.")
 
-# Retrieve artist
-artist = artist_dao.get_artist_by_name("John Doe")
-print(f"Retrieved: {artist}")
+.....
 
 # Close connection
 connection.close()
@@ -146,15 +146,17 @@ from db.factories.impl.SQLiteDbFactory import SQLiteDbFactory
 # Initialize factory
 factory = SQLiteDbFactory("database/music.db", verbose=True)
 
+.....
 # Use factory methods
-artist_dao = factory.get_artist_dao()
-is_artist_inserted = artist_dao.insert("Jane Smith")
-if is_artist_inserted:
-    print(f"Created artist sucessfully")
-else:
-    print(f"Artist creation failed")
-
-artist = artist_dao.get_artist_by_name("Jane Smith")
+# Example usage: Create a new artist (replace with actual data)
+new_artist_id = artist_dao.insert(artist_name="New Artist")
+if new_artist_id!=-1:
+    print(f"New artist created with id {new_artist_id} \nRetrieving the artist...")
+    artist = artist_dao.get_artist_by_id(artist_id=new_artist_id)
+    if artist:
+        print(f"New Artist ID: {artist[ArtistDao._field_id]}, Name: {artist[ArtistDao._field_name]}")
+    else:
+        print("Failed to retrieve the new artist.")
 ```
 
 ### 3. Repository Pattern Usage (Domain-focused operations)
@@ -167,18 +169,15 @@ from db.models.Artist import Artist
 factory = SQLiteRepositoryFactory("database/music.db")
 artist_repository = factory.get_artist_repository()
 
+.....
+
 # Use domain objects
-artist = Artist(name="Bob Wilson")
-is_artist_inserted = artist_repository.add(artist)
-if is_artist_inserted:
-    print(f"Created artist sucessfully")
-else:
-    print(f"Artist creation failed")
+artist = artist_repository.add(Artist(name="Repo Artist"))
+if artist:
+    print(f"Artist created successfully with ID: {artist.artist_id}, Name: {artist.name}")
 
-retrieved_artist = artist_repository.get_by_name("Bob Wilson")
+.....
 
-# Work with strongly-typed domain objects
-print(f"Artist: {retrieved_artist.name} (ID: {retrieved_artist.artist_id})")
 ```
 
 ## 🗄️ Database Schema
