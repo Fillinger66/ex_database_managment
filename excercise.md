@@ -5,15 +5,15 @@ That will show you the split of responsability as each part do its own job.
 
 ## First step
 
-Create DAOs for tables : 
-- Playlist
-- Tracks
+**Create DAOs for tables** : 
+- **Playlist**
+- **Tracks**
 
 The DAO is responsible to query the database nothing more.
 
-These tables are link through playlist_track table, so keep this in mind during the query elaboration
+These tables are linked through ```playlist_track``` table, so keep this in mind during the query elaboration
 
-**Use structed query to have a protection against SQL injection**
+**Use structured query to have a protection against SQL injection**
 ```python
 return self.execute_query(query= 
                                  f"""
@@ -26,7 +26,7 @@ return self.execute_query(query=
                                 fetch_all=False)
 ```
 
-As you see above, the query and the parameters are separated. This is the good practice to avoid SQL injection.
+As you see above, the query and parameters are separated. This is the good practice to avoid SQL injection.
 
 
 ### How to create DAO
@@ -51,6 +51,8 @@ As you see above, the query and the parameters are separated. This is the good p
 
 Update the ```SQLiteDbFactory.py``` to add functions that will handle the creation of your newly created DAO ```main.py```
 
+Take a look at the creation of ```ArtistDao``` to create function for your DAO
+
 ## Thrid step : 
 
 Create yours Entities class (```Track.py``` & ```Playlist.py```) to be able to use them with repository
@@ -71,17 +73,42 @@ class Artist:
     ....
 ```
 
+The table **Playlist** is **linked** to **Tracks** table thanks to the **relation table ``` playlist_track ```**
+
+**In this case, the relation table doesn't not have to be created as a python class as it's only used to link tables**
+
+***Remark : Be careful with relation table, sometimes it can contain revelant fields so you will need to handle it differently***
+
+So for the ```class Playlist```, you will need to add a list of ```Track```.
+
+***Tips : When you will create the Playlist object and populate it, build first the Playlist object and then fetch all tracks related to the playlist and build the list to feed the Playlist object.***
+
+Example : 
+
+Full object creation
+
+1. Fetch the playlist and create the object
+2. Fetch all tracks for the playlist, create each track object and add it to the list of track in the playlist object
+
+Lazy loading (Create only Playlist object and load tracks when you need it)
+
+1. Fetch the playlist and populate the Playlist object
+2. Later when you need tracks related to this Playlist, populate it
+
+
 # Fourth step
 
 Now you have DAOs and the object reflecting database table (Entity class), you can start creating repositories. **You will have to create a repository per table**
 
-The repository is responsible to fetch data from database thanks to your DAO and create the right entity to return.
+The repository is responsible to fetch data from database thanks to yours DAOs and create the right entity to return.
 
 To create the repository you have to : 
 1. Create a new class ```src/db/repository/impl/[tablename]Repository.py```
 2. Extends the ```src/db/repository/IRepository.py```
 3. Implements all the method from IRepository
 4. Test the repository in ```main.py```
+
+
 
 # Fifth step
 
